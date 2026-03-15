@@ -8,12 +8,19 @@ import { UseEffectDemo } from "../components/user/UseEffectDemo";
 import  GetApiDemo  from "../components/user/GetApiDemo";
 import  Setting  from "../components/user/Setting";
 import Logout from "../components/user/Logout";
+import Home from "../pages/Home";
+
+
 
 
 
 const router = createBrowserRouter([
-    {path:"/",element:<Login/>},
+    {path:"/login",element:<Login/>},
+
+    {path:"/", element:<Home />},
+
     {path:"/signup",element:<Signup/>},
+
     {
         path:"/user", element:<UserNavbar/>,
         children:[
