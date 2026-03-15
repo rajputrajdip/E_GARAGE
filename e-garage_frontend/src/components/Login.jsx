@@ -115,7 +115,7 @@ export const Login = () => {
 
   const SubmitHandler = async(data) => {
     try{
-      const res = await axios.post("http://localhost:5000/user/login",data)
+      const res = await axios.post("http://localhost:3000/user/login",data)
       console.log("res...", res);
 
       if(res.status==200){

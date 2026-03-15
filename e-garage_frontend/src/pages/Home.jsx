@@ -95,15 +95,64 @@ function Home() {
       </section>
 
 
-      {/* How It Works */}
+    
       <section className="bg-gray-100 py-16 text-center">
         <h2 className="text-3xl font-semibold mb-8">How It Works</h2>
 
         <div className="space-y-2">
-          <p>1️⃣ Register your account</p>
+          {/* <p>1️⃣ Register your account</p>
           <p>2️⃣ Select a garage</p>
           <p>3️⃣ Book your service</p>
-          <p>4️⃣ Get your vehicle serviced</p>
+          <p>4️⃣ Get your vehicle serviced</p> */}
+          {/* How It Works Section */}
+<section className="py-16 bg-gray-100">
+  <div className="max-w-7xl mx-auto px-6">
+
+    <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
+      How It Works
+    </h2>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+      {/* Step 1 */}
+      <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl transition duration-300">
+        <div className="text-4xl mb-4">1️⃣</div>
+        <h3 className="text-xl font-semibold mb-2">Register</h3>
+        <p className="text-gray-600 text-sm">
+          Create your account quickly to start booking vehicle services.
+        </p>
+      </div>
+
+      {/* Step 2 */}
+      <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl transition duration-300">
+        <div className="text-4xl mb-4">2️⃣</div>
+        <h3 className="text-xl font-semibold mb-2">Select Garage</h3>
+        <p className="text-gray-600 text-sm">
+          Choose a nearby garage that provides the service you need.
+        </p>
+      </div>
+
+      {/* Step 3 */}
+      <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl transition duration-300">
+        <div className="text-4xl mb-4">3️⃣</div>
+        <h3 className="text-xl font-semibold mb-2">Book Service</h3>
+        <p className="text-gray-600 text-sm">
+          Pick a service and schedule your booking online easily.
+        </p>
+      </div>
+
+      {/* Step 4 */}
+      <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-xl transition duration-300">
+        <div className="text-4xl mb-4">4️⃣</div>
+        <h3 className="text-xl font-semibold mb-2">Get Serviced</h3>
+        <p className="text-gray-600 text-sm">
+          Visit the garage and get your vehicle serviced by professionals.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
         </div>
       </section>
 
@@ -118,3 +167,6 @@ function Home() {
 }
 
 export default Home;
+
+
+
