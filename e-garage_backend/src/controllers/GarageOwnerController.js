@@ -1,131 +1,165 @@
-const userschema  = require("../model/garageownermodel")
-const bcrypt = require("bcrypt")
+const GarageOwner = require("../models/GarageOwner");
 
-//register garage owner
-const registergarageowner = async (req,res) => {
-    try{
+// REGISTER
+const registerGarageOwner = async (req, res) => {
 
-        const hashedpassword = await bcrypt.bcrypthash(req.body.password,10)
-        req.body.password = hashedpassword
+  try {
 
-        const garageowner = await userschema.create(req.body)
-        res.status(201).json({
-            message : "garage owner registered successfully",
-            data : garageowner
-        })
-    }
-    catch(err){
-        res.status(500).json({
-            message : "garage owner not registered",
-            err : err
-        })
-    }
-}
-    //loging garage owner
-    const logigarageowner = async (req,res) => {
-        try{
-            const owner = await userschema.findone({email:req.body.email})
-            if(!owner){
-                return res.status(404).json({
-                    message : "garage owner not found"
-                })
-            }
-            const ispasswordmatch = await bcrypt.compare(req.body.password,owner.password)
-            if(!ispasswordmatch){
-                return res.status(401).json({
-                    message : "invalid password"
-                })
-            }
-            res.status(200).json({
-                message :" garage owner logged in successfully",
-                data : owner
-            })
-            }
-        catch(err){
-            res.status(500).json({
-                message : "garage owner not logged in successfully",
-                err : err
-            })
-        }
+    const newOwner = new GarageOwner({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      phone: req.body.phone,
+      document: req.body.document
+    });
+
+    const savedOwner = await newOwner.save();
+
+    res.status(201).json({
+      message: "Garage Owner Registered Successfully",
+      data: savedOwner
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+// LOGIN
+const loginGarageOwner = async (req, res) => {
+
+  try {
+
+    const owner = await GarageOwner.findOne({
+      email: req.body.email
+    });
+
+    if (!owner) {
+      return res.status(404).json({
+        message: "Garage Owner not found"
+      });
     }
 
-    // get all garage owner 
-
-    const getallgarageowner = async (req,res) => {
-        try{
-            const garageowners = await userschema.find()
-            res.status(200).json({
-                message : "all garage owners retrieved successfully",
-                data : garageowners
-            })
-        }
-        catch(err){
-            res.status(500).json({
-                message : "error retrieving garage owners",
-                err : err
-            })
-
-        }
+    if (owner.password !== req.body.password) {
+      return res.status(401).json({
+        message: "Invalid password"
+      });
     }
 
-    //get garage owner by id 
+    res.status(200).json({
+      message: "Login successful",
+      data: owner
+    });
 
-     const garageownerbyid = async (req,res) =>{
-         try{
-            const garageowner = await userschema.findbyid(req.params.id)
-            if(!garageowner){
-                return res.status(404).json({
-                    message : "garage owner not found"
-                })
-            }
-            res.status(200).json({
-                message : "garage owner found",
-                data : garageowner
-            })
-         }catch(err){
-            res.status(500).json({
-                message : "error retrieving garage owner",
-                err : err
-            })
-         }
-     }
+  } catch (error) {
 
-     // update garage owner 
+    res.status(500).json({
+      message: error.message
+    });
 
-     const updatagarageowner = async (req,res) => {
-        try{
-            const garageowner = await userschema.findbyidandupdate(
-                req.params.id,
-                req.body,
-                {new : true}
-            )
-            res.status(200).json({
-                message : "garage owner updated successfully",
-                data : garageowner
-            })
-        }
-        catch(err){
-            res.status(500).json({
-                message : "error updating garage owner",
-                err : err
-            })
-     }
-    }
+  }
 
-// delete garage owner
+};
 
-const deleteowner = async (req,res) => {
-    try{
-        await userschema.findbyidanddelete(req.params.id)
-        res.status(200).json({
-            message : "garage owner deleted successfully",
-            data : garageowner 
-        })
-    }
-    catch(err){
-        res.status(500).json({
-            message : "error deleting garage owner",
-            err : err
-        })
-    }
-}
+// GET ALL
+const getAllGarageOwner = async (req, res) => {
+
+  try {
+
+    const owners = await GarageOwner.find();
+
+    res.status(200).json({
+      data: owners
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+// GET BY ID
+const getGarageOwnerById = async (req, res) => {
+
+  try {
+
+    const owner = await GarageOwner.findById(req.params.id);
+
+    res.status(200).json({
+      data: owner
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+// UPDATE
+const updateGarageOwner = async (req, res) => {
+
+  try {
+
+    const updatedOwner = await GarageOwner.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Garage Owner Updated",
+      data: updatedOwner
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+// DELETE
+const deleteGarageOwner = async (req, res) => {
+
+  try {
+
+    await GarageOwner.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Garage Owner Deleted"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+module.exports = {
+  registerGarageOwner,
+  loginGarageOwner,
+  getAllGarageOwner,
+  getGarageOwnerById,
+  updateGarageOwner,
+  deleteGarageOwner
+};

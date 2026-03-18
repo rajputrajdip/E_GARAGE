@@ -23,7 +23,7 @@ export default function Signup() {
 
       if (res.status === 201) {
         toast.success("User registered successfully 🎉");
-        navigate("/"); // go to login page
+        navigate("/login"); // go to login page
       }
 
     } catch (error) {

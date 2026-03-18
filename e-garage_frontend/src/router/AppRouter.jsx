@@ -4,42 +4,59 @@ import  Signup  from "../components/SignUp";
 import { UserNavbar } from "../components/user/UserNavbar";
 import { AdminSidebar } from "../components/admin/AdminSidebar";
 import { AllUserList } from "../components/admin/AllUserList";
-import { UseEffectDemo } from "../components/user/UseEffectDemo";
-import  GetApiDemo  from "../components/user/GetApiDemo";
-import  Setting  from "../components/user/Setting";
+import Home from "../components/user/Home";
+import Dashboard from "../components/user/Dashboard";
+import Booking from "../components/user/Bookings";
+import Profile from "../components/user/Profile";
+import Setting from "../components/user/Setting";
+import { Outlet } from "react-router-dom";
 import Logout from "../components/user/Logout";
-import Home from "../pages/Home";
-
-
-
+import GarageOwner from "../components/garageowner/GarageOwner";
+import { AllGarageList } from "../components/admin/AllGarageList";
+import { AllBookingList } from "../components/admin/AllBookingList";  
+import { AllPaymentList } from "../components/admin/AllPaymentList";
 
 
 const router = createBrowserRouter([
     {path:"/login",element:<Login/>},
 
-    {path:"/", element:<Home />},
+  
 
     {path:"/signup",element:<Signup/>},
 
-    {
-        path:"/user", element:<UserNavbar/>,
+
+ 
+   {
+  path: "/",
+  element: <UserNavbar />,
+  children: [
+    { index: true, element: <Home /> },
+    { path: "home", element: <Home /> },
+    { path: "user/dashboard", element: <Dashboard /> },
+    {path:"user/bookings", element:<Booking/>},
+    {path:"user/profile", element:<Profile/>},
+    {path:"user/setting", element:<Setting/>},
+    {path:"user/logout", element:<Logout/>}
+   
+  ]
+},
+
+    
+       { path:'/admin', 
+        element:<AdminSidebar/>,
         children:[
-            
-                {path:"useeffectdemo",element:<UseEffectDemo/>},
-                {path:"getapidemo",element:<GetApiDemo/>},
-                {path:"setting",element:<Setting/>},
-                {path:"logout",element:<Logout/>}
-            
+              { path: "users", element: <AllUserList /> },
+              { path: "garages", element: <AllGarageList /> },
+              { path: "bookings", element: <AllBookingList /> },
+              { path: "payments", element: <AllPaymentList
+                 /> }
         ]
     },
-    {
-        path:'/admin', element:<AdminSidebar/>,
-        children:[
-            {
-                path:'alluser', element:<AllUserList/>
-            }
-        ]
-    }
+    // Garage Owner Route
+  {
+    path: "/garageowner/register",
+    element: <GarageOwner />
+  }
 ])
 
 const AppRouter = () => {

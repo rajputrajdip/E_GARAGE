@@ -1,10 +1,22 @@
-const router = require ("express").Router()
-const GarageOwnercontroller = require("../controllers/GarageOwnerController")
-router.post("/register",garageOwnercontroller.registergarageowner)
-router.post("/login",garageOwnercontroller.logigarageowner)
-router.get("/getallgarageowner",garageOwnercontroller.getallgarageowner)    
-router.get("/getgarageownerbyid/:id",garageOwnercontroller.getgarageownerbyid)
-router.put("/updategarageowner/:id",garageOwnercontroller.updategarageowner)
-router.delete("/deletegarageowner/:id",garageOwnercontroller.deletegarageowner)
+const router = require("express").Router();
+const garageOwnerController = require("../controllers/GarageOwnerController");
 
-module.exports = router
+// REGISTER
+router.post("/register", garageOwnerController.registerGarageOwner);
+
+// LOGIN
+router.post("/login", garageOwnerController.loginGarageOwner);
+
+// GET ALL
+router.get("/getallgarageowner", garageOwnerController.getAllGarageOwner);
+
+// GET BY ID
+router.get("/getgarageownerbyid/:id", garageOwnerController.getGarageOwnerById);
+
+// UPDATE
+router.put("/updategarageowner/:id", garageOwnerController.updateGarageOwner);
+
+// DELETE
+router.delete("/deletegarageowner/:id", garageOwnerController.deleteGarageOwner);
+
+module.exports = router;

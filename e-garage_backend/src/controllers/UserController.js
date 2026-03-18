@@ -1,26 +1,47 @@
 const userSchema = require("../models/Usermodels")
 const bcrypt = require("bcrypt")
 const mailSend = require("../utils/MailUtil")
+const jwt = require("jsonwebtoken") 
+const secret = process.env.JWT_SECRET  // Use environment variable or default secret 
 
+const registerUser = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
 
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-const registeruser = async(req,res)=>{
-    try{
+    // Check if user exists
+    const existingUser = await userSchema.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
 
-        const hashedPassword = await bcrypt.hash(req.body.password,10)
-        req.body.password = hashedPassword
-    const saveuser = await userSchema.create({...req.body,password:hashedPassword})
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Only pick fields defined in schema
+    const newUser = await userSchema.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword
+    });
+
     res.status(201).json({
-        message : "user saved",
-        data : saveuser
-    })
-    }
-    catch(err){
-        res.status(500).json({
-            message : "user not saved",
-            error : err
-        })
-    }
+      message: "User created successfully",
+      data: {
+        id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email
+      }
+    });
+  } catch (err) {
+    console.error("Server Error:", err);
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
 }
 const loginUser = async(req,res)=>{
     try{
@@ -32,9 +53,17 @@ const loginUser = async(req,res)=>{
             //compare the password
             const isPasswordMatch = await bcrypt.compare(password,foundUserFromEmail.password)
             if(isPasswordMatch){
+
+              const token = jwt.sign(foundUserFromEmail.toObject(), secret);
+
+
                 res.status(200).json({
+
+                  
                     message : "login successful",
-                    data : foundUserFromEmail
+                    //data : foundUserFromEmail
+                    token : token,
+                    role : foundUserFromEmail.role
                 })
             }else{
                 res.status(401).json({
@@ -47,17 +76,21 @@ const loginUser = async(req,res)=>{
             })
         }     
         
+        const { firstName } = foundUserFromEmail;
         await mailSend(email,"welcome to e-garage",` Hello ${firstName}login successful you have successfully logged in to e-garage`)
         }catch(err){
         res.status(500).json({
-            mesasge : "login failed",
+            message : "login failed",
             error : err
         })
     }
 }
 
 module.exports = {
-    registeruser,
+    registerUser,
     loginUser
 
 }
+
+
+

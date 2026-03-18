@@ -1,51 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Logout = () => {
+function Logout() {
+
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Remove token or user data from localStorage
+  useEffect(() => {
+
+    // Remove user data or token
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     // Redirect to login page
-    navigate("/login");
-  };
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
 
-  const handleCancel = () => {
-    navigate(-1); // Go back to previous page
-  };
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-96 text-center">
-        <div className="text-4xl mb-4">🚪</div>
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">
-          Confirm Logout
-        </h2>
-        <p className="text-gray-500 mb-6">
-          Are you sure you want to logout from your account?
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+
+      <div className="bg-white shadow-lg rounded-lg p-10 text-center">
+
+        <h1 className="text-2xl font-bold mb-4 text-red-500">
+          Logging Out...
+        </h1>
+
+        <p className="text-gray-600">
+          You are being logged out. Please wait.
         </p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={handleCancel}
-            className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-          >
-            Logout
-          </button>
-        </div>
       </div>
+
     </div>
   );
-};
+}
 
 export default Logout;

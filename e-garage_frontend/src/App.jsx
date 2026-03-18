@@ -3,6 +3,7 @@ import AppRouter from './router/AppRouter'
 import { ToastContainer, Bounce } from 'react-toastify'
 import SignUp from './components/SignUp'
 import axios from 'axios'
+import { FiHome, FiUser, FiLogOut, FiClipboard } from "react-icons/fi";
 
 //import './App.css'
 

@@ -120,9 +120,11 @@ export const Login = () => {
 
       if(res.status==200){
         toast.success("login success")
+        // console.log("role...", res.data.data.role)
+        // console.log(res.data.token)
 
         if(res.data.data.role=="user"){
-          navigate("/user")
+          navigate("/")
         }
         else if (res.data.data.role=="admin"){
           navigate("/admin")
@@ -193,6 +195,9 @@ export const Login = () => {
         </p>
 
       </form>
+
+
+
 
     </div>
   )
