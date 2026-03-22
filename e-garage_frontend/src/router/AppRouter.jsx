@@ -4,47 +4,67 @@ import Signup from "../components/SignUp";
 import { UserNavbar } from "../components/user/UserNavbar";
 import Home from "../components/user/Home";
 import Garages from "../components/user/Garages";
-import Services from "../components/user/Services";
 import Booking from "../components/user/Booking";
 import MyBookings from "../components/user/MyBookings";
+import BookingDetails from "../components/user/BookingDetails";
+import Services from "../components/user/Services"; // ✅ IMPORTANT
 
-// Router Configuration
+import { AdminNavbar } from "../components/admin/AdminNavbar";
+import Dashboard from "../components/admin/Dashboard";
+import Users from "../components/admin/Users";
+import GaragesAdmin from "../components/admin/Garages";
+
+import { PrivateRoute } from "./PrivateRoute";
+import GarageOwnerDashboard from "../components/garageowner/GarageOwnerDashboard";
+
 const router = createBrowserRouter([
+  // Public Routes
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
 
-
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
- 
-
-  // User Routes
+  // ✅ USER ROUTES
   {
     path: "/",
-    element: <UserNavbar />,
+    element: (
+      <PrivateRoute role="user">
+        <UserNavbar />
+      </PrivateRoute>
+    ),
     children: [
       { index: true, element: <Home /> },
       { path: "home", element: <Home /> },
       { path: "garages", element: <Garages /> },
-    { path: "garage/:id", element: <Services /> },
-    { path: "booking", element: <Booking /> },
-    {
-  path: "user/bookings",
-  element: <MyBookings />
-}
+
+      // 🔥 THIS WAS MISSING (MAIN FIX)
+      { path: "garage/:id", element: <Services /> },
+
+      { path: "booking", element: <Booking /> },
+      { path: "user/bookings", element: <MyBookings /> },
+      { path: "booking/:id", element: <BookingDetails /> },
     ],
   },
 
-  // 👉 You can add Garage Owner routes here later
+  // Owner
+  { path: "/owner/dashboard", element: <GarageOwnerDashboard /> },
+
+  // ✅ ADMIN ROUTES
+  {
+    path: "/admin",
+    element: (
+      <PrivateRoute role="admin">
+        <AdminNavbar />
+      </PrivateRoute>
+    ),
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "users", element: <Users /> },
+      { path: "garages", element: <GaragesAdmin /> },
+
+    ],
+  },
 ]);
 
-// App Router Component
-const AppRouter = () => {
-  return <RouterProvider router={router} />;
-};
+const AppRouter = () => <RouterProvider router={router} />;
 
 export default AppRouter;

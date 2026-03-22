@@ -19,7 +19,13 @@ app.use("/garage", require("./src/routes/GarageRoutes"));
 app.use("/service", require("./src/routes/ServiceRoutes"));
 app.use("/booking", require("./src/routes/BookingRoutes"));
 
-app.use("/booking", require("./src/routes/BookingRoutes"));
+
+
+const garageRoutes = require("./src/routes/GarageOwnerRoutes");
+app.use("/garage", garageRoutes);
+
+const garageownerRoutes = require("./src/routes/GarageOwnerRoutes");
+app.use("/garageowner", garageownerRoutes);
 
 // PORT FIXED
 const PORT = 3000;

@@ -57,7 +57,7 @@ const userSchema = new Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, default: "user", enum: ["user", "admin"] },
+  role: { type: String, default: "user", enum: ["user", "admin","owner"] },
   profilePic: { type: String, default: "" },
   status: { type: String, default: "active", enum: ["active", "inactive", "deleted", "blocked"] }
 }, { timestamps: true });

@@ -2,51 +2,63 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
 const Booking = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { service, garageId } = location.state || {};
-  const [userId, setUserId] = useState("65fabc1234567890abcd1234"); // TEMP USER ID
+
   const [date, setDate] = useState("");
 
+  // ✅ Get logged-in user
+  const userId = localStorage.getItem("userId");
+
+  // ❌ If no data
   if (!service || !garageId) {
     return <p className="p-6 text-red-500">No service selected!</p>;
   }
 
   const handleBooking = async (e) => {
   e.preventDefault();
+
+  const userId = localStorage.getItem("userId");
+
   if (!userId) return alert("Please login first!");
+
+  
+  console.log("Sending Data:", {
+    userId,
+    garageId: service.garageId,
+    serviceId: service._id,
+  });
 
   try {
     const res = await axios.post("http://localhost:3000/booking/create", {
       userId,
-      garageId,
+      garageId: service.garageId, // 🔥 FIX HERE
       serviceId: service._id,
       serviceName: service.serviceName,
       price: service.price,
       bookingDate: date || new Date(),
     });
+
     alert("Booking Successful!");
     navigate("/user/bookings");
   } catch (err) {
-    console.log(err);
+    console.log("Booking Error:", err);
     alert("Booking Failed!");
   }
 };
-
   return (
     <div className="p-6 max-w-md mx-auto border rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Booking Service</h2>
 
       <p>
-        <strong>Service:</strong> {service.serviceName}
+        <strong>Service:</strong> {service.name}
       </p>
       <p>
         <strong>Price:</strong> ₹ {service.price}
       </p>
-
       <p>
         <strong>Garage ID:</strong> {garageId}
       </p>

@@ -19,3 +19,20 @@ exports.getServiceByGarage = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//add service
+exports.addService = async (req, res) => {
+  try {
+    const { serviceName, price, garageId } = req.body;
+
+    const service = await Service.create({
+      serviceName,
+      price,
+      garageId,
+    });
+
+    res.status(201).json(service);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
