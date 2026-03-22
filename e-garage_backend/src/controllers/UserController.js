@@ -1,96 +1,54 @@
-const userSchema = require("../models/Usermodels")
-const bcrypt = require("bcrypt")
-const mailSend = require("../utils/MailUtil")
-const jwt = require("jsonwebtoken") 
-const secret = process.env.JWT_SECRET  // Use environment variable or default secret 
+const User = require("../models/Usermodels");                 
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const secret = process.env.JWT_SECRET || "secret123"; // fallback secret
 
+// Register new user
 const registerUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user exists
-    const existingUser = await userSchema.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: "Email already exists" });
-    }
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(409).json({ message: "Email already exists" });
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Only pick fields defined in schema
-    const newUser = await userSchema.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword
+    const newUser = await User.create({
+      firstName, lastName, email, password: hashedPassword
     });
 
     res.status(201).json({
-      message: "User created successfully",
-      data: {
-        id: newUser._id,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email
-      }
+      message: "User registered successfully",
+      data: { id: newUser._id, firstName, lastName, email }
     });
   } catch (err) {
-    console.error("Server Error:", err);
-    res.status(500).json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
-}
-const loginUser = async(req,res)=>{
-    try{
-        const {email,password} = req.body
-                                                //modelcolumnname:req.body.email
-        const foundUserFromEmail = await userSchema.findOne({email:email})
-        //console.log(foundUserFromEmail)
-        if(foundUserFromEmail){
-            //compare the password
-            const isPasswordMatch = await bcrypt.compare(password,foundUserFromEmail.password)
-            if(isPasswordMatch){
+};
 
-              const token = jwt.sign(foundUserFromEmail.toObject(), secret);
+// Login user
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-                res.status(200).json({
+    // Create JWT token
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, secret, { expiresIn: "7d" });
 
-                  
-                    message : "login successful",
-                    //data : foundUserFromEmail
-                    token : token,
-                    role : foundUserFromEmail.role
-                })
-            }else{
-                res.status(401).json({
-                    message : "invalid credentials"
-                })
-            }
-        }else{
-            res.status(404).json({
-                message : "user not found"
-            })
-        }     
-        
-        const { firstName } = foundUserFromEmail;
-        await mailSend(email,"welcome to e-garage",` Hello ${firstName}login successful you have successfully logged in to e-garage`)
-        }catch(err){
-        res.status(500).json({
-            message : "login failed",
-            error : err
-        })
-    }
-}
+    res.status(200).json({
+      message: "Login successful",
+      token
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Login failed", error: err.message });
+  }
+};
 
-module.exports = {
-    registerUser,
-    loginUser
-
-}
-
-
-
+module.exports = { registerUser, loginUser };

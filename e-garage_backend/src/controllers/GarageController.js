@@ -1,46 +1,31 @@
 const Garage = require("../models/GarageModel");
 
-// create garage
+// CREATE
 exports.createGarage = async (req, res) => {
   try {
-
     const garage = await Garage.create(req.body);
-
-    res.status(201).json({
-      message: "Garage created",
-      data: garage
-    });
-
+    res.status(201).json(garage);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// get all garages
-exports.getGarages = async (req, res) => {
+// GET ALL
+exports.getAllGarages = async (req, res) => {
   try {
-
-    const garages = await Garage.find()
-      .populate("owner_id");
-
-    res.json(garages);
-
+    const garages = await Garage.find();
+    res.status(200).json(garages);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// delete garage
-exports.deleteGarage = async (req, res) => {
+// GET BY ID
+exports.getGarageById = async (req, res) => {
   try {
-
-    await Garage.findByIdAndDelete(req.params.id);
-
-    res.json({
-      message: "Garage deleted"
-    });
-
+    const garage = await Garage.findById(req.params.id);
+    res.status(200).json(garage);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

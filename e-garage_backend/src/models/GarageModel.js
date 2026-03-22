@@ -1,30 +1,23 @@
 const mongoose = require("mongoose");
 
 const garageSchema = new mongoose.Schema({
-  owner_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "GarageOwner"
-  },
-  garage_name: {
+  garageName: {
     type: String,
-    required: true
-  },
-  address: {
-    type: String
+    required: true,
   },
   city: {
-    type: String
+    type: String,
   },
-  pincode: {
-    type: String
+  address: {
+    type: String,
   },
-  contact: {
-    type: String
+  image: {
+    type: String,
   },
-  created_at: {
-    type: Date,
-    default: Date.now
+  garageOwnerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "garageOwner",
   }
-});
+}, { timestamps: true });
 
-module.exports = mongoose.model("Garage", garageSchema);
+module.exports = mongoose.model("garage", garageSchema);

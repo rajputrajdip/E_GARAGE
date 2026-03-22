@@ -1,31 +1,28 @@
-const express = require("express")
-const app = express()
-const cors = require("cors")
+const express = require("express");
+const app = express();
+const cors = require("cors");
 
-//load env file
-require("dotenv").config()
-app.use(express.json())
-app.use(cors()) //allow all requests from any origin
+// ENV
+require("dotenv").config();
 
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-const DBconnection = require("./src/utils/DBconnection")
-DBconnection()
+// DB Connection
+const DBconnection = require("./src/utils/DBconnection");
+DBconnection();
 
-const UserRoutes = require("./src/routes/UserRoutes")
-app.use("/user",UserRoutes)
+// Routes
+app.use("/user", require("./src/routes/UserRoutes"));
+app.use("/garage", require("./src/routes/GarageRoutes"));
+app.use("/service", require("./src/routes/ServiceRoutes"));
+app.use("/booking", require("./src/routes/BookingRoutes"));
 
+app.use("/booking", require("./src/routes/BookingRoutes"));
 
-// import routes
-const garageOwnerRoutes = require("./src/routes/GarageOwnerRoutes");
-// use routes
-app.use("/garageOwner", garageOwnerRoutes);
-
-
-  const AdminRoutes = require("./src/routes/AdminRoutes");
-
-app.use("/admin", AdminRoutes);
-
-const PORT = process.env.PORT
-app.listen(PORT,()=>{
-    console.log(`server is listen on port no. ${PORT}`)
-})
+// PORT FIXED
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});

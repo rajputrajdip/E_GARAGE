@@ -1,9 +1,7 @@
-const router = require("express").Router()
-const servicecontroller = require("../controllers/ServiceController")
-router.post("/addservice",servicecontroller.addservice)
-router.get("/getallservice",servicecontroller.getallservice)
-router.get("/getservicebyid/:id",servicecontroller.getservicebyid)
-router.put("/updateservice/:id",servicecontroller.uodateservice)
-router.delete("/deleteservice/:id",servicecontroller.deleteservice)
+const router = require("express").Router();
+const serviceController = require("../controllers/ServiceController");
 
-module.exports = router
+router.post("/create", serviceController.createService);
+router.get("/garage/:garageId", serviceController.getServiceByGarage);
+
+module.exports = router;

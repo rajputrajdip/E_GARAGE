@@ -1,24 +1,20 @@
 const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
-  garage_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Garage"
-  },
-  category_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ServiceCategory"
-  },
-  service_name: {
+  serviceName: {
     type: String,
-    required: true
+    required: true,
   },
   price: {
-    type: Number
+    type: Number,
   },
   description: {
-    type: String
+    type: String,
+  },
+  garageId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "garage",
   }
-});
+}, { timestamps: true });
 
-module.exports = mongoose.model("Service", serviceSchema);
+module.exports = mongoose.model("service", serviceSchema);

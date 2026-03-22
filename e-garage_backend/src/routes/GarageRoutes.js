@@ -1,10 +1,8 @@
-const router = require("express").Router()
-const garageController = require("../controllers/GarageController")
+const router = require("express").Router();
+const garageController = require("../controllers/GarageController");
 
-router.post("/garage", garageController.createGarage)
+router.post("/create", garageController.createGarage);
+router.get("/all", garageController.getAllGarages);
+router.get("/:id", garageController.getGarageById);
 
-router.get("/garage", garageController.getGarages)
-
-router.delete("/garage/:id", garageController.deleteGarage)
-
-module.exports = router
+module.exports = router;

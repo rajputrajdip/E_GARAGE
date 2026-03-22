@@ -1,11 +1,14 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import { FiHome, FiUser, FiSettings, FiClipboard, FiLogOut } from "react-icons/fi";
+import {
+  FiHome,
+  FiClipboard,
+  FiTool
+} from "react-icons/fi";
 
 export const UserNavbar = () => {
   return (
     <div>
-
       {/* Navbar */}
       <nav className="bg-slate-900 text-white px-8 py-4 flex justify-between items-center shadow-md">
 
@@ -17,6 +20,7 @@ export const UserNavbar = () => {
         {/* Navigation Links */}
         <div className="flex items-center gap-6 text-sm font-medium">
 
+          {/* Home */}
           <Link
             to="/"
             className="flex items-center gap-1 hover:text-orange-400"
@@ -24,13 +28,15 @@ export const UserNavbar = () => {
             <FiHome /> Home
           </Link>
 
+          {/* Garages */}
           <Link
-            to="/user/dashboard"
+            to="/garages"
             className="flex items-center gap-1 hover:text-orange-400"
           >
-            <FiHome /> Dashboard
+            <FiTool /> Garages
           </Link>
 
+          {/* Bookings */}
           <Link
             to="/user/bookings"
             className="flex items-center gap-1 hover:text-orange-400"
@@ -38,33 +44,13 @@ export const UserNavbar = () => {
             <FiClipboard /> Bookings
           </Link>
 
-          <Link
-            to="/user/profile"
-            className="flex items-center gap-1 hover:text-orange-400"
-          >
-            <FiUser /> Profile
-          </Link>
-
-          <Link
-            to="/user/setting"
-            className="flex items-center gap-1 hover:text-orange-400"
-          >
-            <FiSettings /> Settings
-          </Link>
-
-          <Link
-            to="/user/logout"
-            className="flex items-center gap-1 text-red-400 hover:text-red-500"
-          >
-            <FiLogOut /> Logout
-          </Link>
-
         </div>
       </nav>
 
       {/* Page Content */}
-      <Outlet />
-
+      <div className="p-4">
+        <Outlet />
+      </div>
     </div>
   );
 };
