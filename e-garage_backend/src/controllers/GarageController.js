@@ -29,3 +29,20 @@ exports.getGarageById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// ✅ APPROVE / REJECT GARAGE
+exports.updateGarageStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const garage = await Garage.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    res.json({ message: "Garage status updated", garage });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

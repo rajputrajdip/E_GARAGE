@@ -1,4 +1,3 @@
-// components/admin/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -7,43 +6,30 @@ const AdminDashboard = () => {
   const [garages, setGarages] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState("users");
+  const [search, setSearch] = useState("");
 
   const token = localStorage.getItem("token");
 
-  // Fetch Users
+  // Fetch Data
   const fetchUsers = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/user/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(res.data);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-    }
+    const res = await axios.get("http://localhost:3000/user/all", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUsers(res.data);
   };
 
-  // Fetch Garages
   const fetchGarages = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/garage/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setGarages(res.data);
-    } catch (err) {
-      console.error("Error fetching garages:", err);
-    }
+    const res = await axios.get("http://localhost:3000/garage/all", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setGarages(res.data);
   };
 
-  // Fetch Bookings
   const fetchBookings = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/booking/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBookings(res.data);
-    } catch (err) {
-      console.error("Error fetching bookings:", err);
-    }
+    const res = await axios.get("http://localhost:3000/booking/all", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setBookings(res.data);
   };
 
   useEffect(() => {
@@ -52,125 +38,174 @@ const AdminDashboard = () => {
     fetchBookings();
   }, []);
 
+  // 🔥 Update Booking Status
+  const updateStatus = async (id, status) => {
+    try {
+      await axios.put(
+        `http://localhost:3000/booking/update/${id}`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchBookings();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 🔍 Filter
+  const filteredUsers = users.filter((u) =>
+    u.firstName.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const updateGarageStatus = async (id, status) => {
+  try {
+    await axios.put(
+      `http://localhost:3000/garage/status/${id}`,
+      { status }
+    );
+    fetchGarages();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
+      {/* 🔥 STATS CARDS */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="bg-blue-500 text-white p-4 rounded">
+          Users: {users.length}
+        </div>
+        <div className="bg-green-500 text-white p-4 rounded">
+          Garages: {garages.length}
+        </div>
+        <div className="bg-yellow-500 text-white p-4 rounded">
+          Bookings: {bookings.length}
+        </div>
+        <div className="bg-purple-500 text-white p-4 rounded">
+          Revenue: ₹
+          {bookings.reduce((sum, b) => sum + (b.price || 0), 0)}
+        </div>
+      </div>
+
+      {/* 🔍 SEARCH */}
+      <input
+        type="text"
+        placeholder="Search..."
+        className="border p-2 mb-4 w-full rounded"
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
       {/* Tabs */}
       <div className="flex gap-4 mb-6">
-        <button
-          className={`px-4 py-2 rounded ${
-            activeTab === "users" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => setActiveTab("users")}
-        >
-          Users
-        </button>
-        <button
-          className={`px-4 py-2 rounded ${
-            activeTab === "garages" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => setActiveTab("garages")}
-        >
-          Garages
-        </button>
-        <button
-          className={`px-4 py-2 rounded ${
-            activeTab === "bookings" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => setActiveTab("bookings")}
-        >
-          Bookings
-        </button>
+        {["users", "garages", "bookings"].map((tab) => (
+          <button
+            key={tab}
+            className={`px-4 py-2 rounded ${
+              activeTab === tab
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.toUpperCase()}
+          </button>
+        ))}
       </div>
 
-      {/* Tab Content */}
-      <div>
-        {/* Users */}
-        {activeTab === "users" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Users List</h2>
-            <table className="min-w-full border">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border px-4 py-2">#</th>
-                  <th className="border px-4 py-2">Name</th>
-                  <th className="border px-4 py-2">Email</th>
-                  <th className="border px-4 py-2">Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user, idx) => (
-                  <tr key={user._id}>
-                    <td className="border px-4 py-2">{idx + 1}</td>
-                    <td className="border px-4 py-2">{user.firstName} {user.lastName}</td>
-                    <td className="border px-4 py-2">{user.email}</td>
-                    <td className="border px-4 py-2">{user.role}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* USERS */}
+      {activeTab === "users" && (
+        <table className="min-w-full bg-white shadow rounded">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2">#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((u, i) => (
+              <tr key={u._id} className="text-center border-t">
+                <td>{i + 1}</td>
+                <td>{u.firstName} {u.lastName}</td>
+                <td>{u.email}</td>
+                <td>{u.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-        {/* Garages */}
-        {activeTab === "garages" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Garages List</h2>
-            <table className="min-w-full border">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border px-4 py-2">#</th>
-                  <th className="border px-4 py-2">Garage Name</th>
-                  <th className="border px-4 py-2">City</th>
-                  <th className="border px-4 py-2">Owner</th>
-                </tr>
-              </thead>
-              <tbody>
-                {garages.map((garage, idx) => (
-                  <tr key={garage._id}>
-                    <td className="border px-4 py-2">{idx + 1}</td>
-                    <td className="border px-4 py-2">{garage.garageName}</td>
-                    <td className="border px-4 py-2">{garage.city}</td>
-                    <td className="border px-4 py-2">{garage.garageOwner?.firstName || "N/A"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* GARAGES */}
+      {activeTab === "garages" && (
+        <table className="min-w-full bg-white shadow rounded">
+          <thead className="bg-gray-100">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>City</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            {garages.map((g, i) => (
+              <tr key={g._id} className="text-center border-t">
+                <td>{i + 1}</td>
+                <td>{g.garageName}</td>
+                <td>{g.city}</td>
+                <td>{g.garageOwner?.firstName || "N/A"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-        {/* Bookings */}
-        {activeTab === "bookings" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Bookings List</h2>
-            <table className="min-w-full border">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border px-4 py-2">#</th>
-                  <th className="border px-4 py-2">User</th>
-                  <th className="border px-4 py-2">Garage</th>
-                  <th className="border px-4 py-2">Service</th>
-                  <th className="border px-4 py-2">Price</th>
-                  <th className="border px-4 py-2">Booking Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bookings.map((b, idx) => (
-                  <tr key={b._id}>
-                    <td className="border px-4 py-2">{idx + 1}</td>
-                    <td className="border px-4 py-2">{b.userId?.firstName || "N/A"}</td>
-                    <td className="border px-4 py-2">{b.garageId?.garageName || "N/A"}</td>
-                    <td className="border px-4 py-2">{b.serviceName || b.serviceId?.serviceName || "N/A"}</td>
-                    <td className="border px-4 py-2">{b.price}</td>
-                    <td className="border px-4 py-2">{new Date(b.bookingDate).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {/* BOOKINGS */}
+      {activeTab === "bookings" && (
+        <table className="min-w-full bg-white shadow rounded">
+          <thead className="bg-gray-100">
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Garage</th>
+              <th>Service</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((b, i) => (
+              <tr key={b._id} className="text-center border-t">
+                <td>{i + 1}</td>
+                <td>{b.userId?.firstName || "N/A"}</td>
+                <td>{b.garageId?.garageName || "N/A"}</td>
+                <td>{b.serviceId?.serviceName || "N/A"}</td>
+                <td>₹{b.price}</td>
+                <td>{new Date(b.bookingDate).toLocaleDateString()}</td>
+
+                {/* 🔥 STATUS UPDATE */}
+                <td>
+                  <select
+                    value={b.status || "Pending"}
+                    onChange={(e) =>
+                      updateStatus(b._id, e.target.value)
+                    }
+                    className="border p-1 rounded"
+                  >
+                    <option>Pending</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

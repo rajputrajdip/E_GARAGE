@@ -28,14 +28,14 @@ const Booking = () => {
   
   console.log("Sending Data:", {
     userId,
-    garageId: service.garageId,
+    garageId: garageId,
     serviceId: service._id,
   });
 
   try {
     const res = await axios.post("http://localhost:3000/booking/create", {
       userId,
-      garageId: service.garageId, // 🔥 FIX HERE
+      garageId: garageId, // 🔥 FIX HERE
       serviceId: service._id,
       serviceName: service.serviceName,
       price: service.price,
@@ -54,7 +54,7 @@ const Booking = () => {
       <h2 className="text-2xl font-bold mb-4">Booking Service</h2>
 
       <p>
-        <strong>Service:</strong> {service.name}
+        <strong>Service:</strong> {service.serviceName}
       </p>
       <p>
         <strong>Price:</strong> ₹ {service.price}

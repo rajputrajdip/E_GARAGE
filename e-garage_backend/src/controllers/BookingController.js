@@ -1,4 +1,5 @@
 // controllers/BookingController.js
+const GarageOwner = require("../models/GarageOwnerModel");
 const Booking = require("../models/BookingModel");
 const Service = require("../models/ServiceModel");
 const mongoose = require("mongoose");
@@ -6,15 +7,15 @@ const mongoose = require("mongoose");
 // Create booking
 exports.createBooking = async (req, res) => {
   try {
-    const { userId, serviceId, serviceName, price, bookingDate } = req.body;
+    const { userId, serviceId, serviceName, price, bookingDate, garageId } = req.body;
 
     const service = await Service.findById(serviceId);
     if (!service) return res.status(404).json({ message: "Service not found" });
 
     const booking = await Booking.create({
-      userId: mongoose.Types.ObjectId(userId),
-      serviceId: mongoose.Types.ObjectId(serviceId),
-      garageId: service.garageId,
+      userId,        // ✅ no ObjectId()
+      serviceId,     // ✅ no ObjectId()
+      garageId,      // ✅ no ObjectId()
       serviceName,
       price,
       bookingDate
@@ -22,7 +23,7 @@ exports.createBooking = async (req, res) => {
 
     res.status(201).json(booking);
   } catch (error) {
-    console.error("Booking creation error:", error);
+    console.error("🔥 Booking creation error:", error); // 👈 check this log
     res.status(500).json({ message: error.message });
   }
 };
@@ -30,7 +31,7 @@ exports.createBooking = async (req, res) => {
 // Get bookings by user
 exports.getUserBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ userId: req.params.userId })
+    const bookings = await Booking.find({  userId: new mongoose.Types.ObjectId(req.params.userId) })
       .populate("userId", "firstName lastName email role")
       .populate("garageId", "garageName city")
       .populate("serviceId", "serviceName price");
