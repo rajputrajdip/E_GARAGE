@@ -6,6 +6,7 @@ const garageOwnerSchema = new mongoose.Schema(
     city: { type: String, required: true },
     address: { type: String },
     phone: { type: String },
+    ownername: { type: String, required: true },
   },
   { timestamps: true }
 );

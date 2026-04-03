@@ -5,8 +5,30 @@ const mongoose = require("mongoose");
 // Get garages owned by the logged-in owner
 exports.getMyGarages = async (req, res) => {
   try {
-    const garages = await Garage.find({ garageOwnerId: req.user.id });
+    const garages = await Garage.find({ garageOwnerId: req.user.id || req.user._id });
     res.status(200).json(garages);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+// GET ALL GARAGES WITH OWNER NAME
+exports.getGaragesWithOwnerName = async (req, res) => {
+  try {
+    const garages = await Garage.find();
+
+    // 🔥 manually attach owner name
+    const result = await Promise.all(
+      garages.map(async (g) => {
+        const owner = await GarageOwner.findById(g.garageOwnerId);
+
+        return {
+          ...g._doc,
+          ownername: owner ? owner.ownername : "N/A",
+        };
+      })
+    );
+
+    res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -25,8 +47,8 @@ exports.createGarage = async (req, res) => {
       garageName,
       city,
       address,
-      image,
-      garageOwnerId: req.user.id,
+      image: req.file ? req.file.path : "",
+      garageOwnerId: req.user._id,
     });
 
     res.status(201).json(newGarage);

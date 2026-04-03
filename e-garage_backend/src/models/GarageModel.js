@@ -34,12 +34,12 @@ const garageSchema = new mongoose.Schema(
     garageName: { type: String, required: true },
     city: { type: String },
     address: { type: String },
-    image: { type: String },
+    image: { type: String, default: "" },
 
-    garageOwnerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "garageOwner",
-    },
+   garageOwnerId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User", // ✅ KEEP THIS
+},
 
     // 🔥 NEW: Approval System
     status: {

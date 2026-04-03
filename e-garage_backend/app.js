@@ -27,6 +27,7 @@ app.use("/garage", garageRoutes);
 const garageownerRoutes = require("./src/routes/GarageOwnerRoutes");
 app.use("/garageowner", garageownerRoutes);
 
+app.use("/uploads", express.static("uploads"));
 
 // PORT FIXED
 const PORT = 3000;

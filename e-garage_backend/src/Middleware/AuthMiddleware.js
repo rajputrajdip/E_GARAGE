@@ -49,30 +49,48 @@
 
 
 const jwt = require("jsonwebtoken");
+
 const secret = process.env.JWT_SECRET || "secret123";
 
-const validateToken = async (req, res, next) => {
+const validateToken = (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const header = req.headers.authorization;
 
+    // ❌ No token
+    if (!header) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    // ❌ Not Bearer format
+    if (!header.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Invalid token format" });
+    }
+
+    // ✅ Extract token
+    const token = header.split(" ")[1];
+
+    // ❌ Empty token
     if (!token) {
-      return res.status(401).json({ message: "Token is not present" });
+      return res.status(401).json({ message: "Token missing" });
     }
 
-    if (!token.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Token is not Bearer token" });
-    }
+    // ✅ Verify token
+    const decoded = jwt.verify(token, secret);
 
-    const tokenValue = token.split(" ")[1];
-    const decodedData = jwt.verify(tokenValue, secret);
-
-    // ✅ Attach decoded token data to req.user
-    req.user = decodedData;
+    // ✅ Attach user data
+    req.user = decoded;
 
     next();
   } catch (err) {
-    console.error("Token validation error:", err);
-    res.status(500).json({ message: "Error while validating token", err });
+    console.error("Auth Error:", err.message);
+
+    // ❌ Token expired
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
+
+    // ❌ Invalid token
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 

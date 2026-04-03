@@ -172,6 +172,13 @@ export const UserNavbar = () => {
             </button>
 
             <button
+  onClick={() => navigate("/profile")}
+  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+>
+  My Profile
+</button>
+
+            <button
               onClick={handleLogout}
               className="text-red-400 flex items-center gap-2"
             >

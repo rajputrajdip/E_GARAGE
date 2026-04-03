@@ -1,47 +1,58 @@
 import React from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const menu = [
+    { name: "Dashboard", path: "/admin" },
+    { name: "Users", path: "/admin/users" },
+    { name: "Garages", path: "/admin/garages" },
+    { name: "Bookings", path: "/admin/bookings" },
+    { name: "Services", path: "/admin/services" },
+  ];
 
   return (
-    <div className="flex h-screen">
-      
+    <div className="flex h-screen bg-gray-100">
+
       {/* Sidebar */}
-      <div className="w-64 bg-gray-900 text-white p-5">
-        <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+      <div className="w-64 bg-gray-900 text-gray-200 flex flex-col">
+        <div className="p-5 text-xl font-semibold border-b border-gray-800">
+          Admin Panel
+        </div>
 
-        <ul className="space-y-4">
-          <li onClick={() => navigate("/admin")} className="cursor-pointer hover:text-blue-400">
-            Dashboard
-          </li>
-          <li onClick={() => navigate("/admin/users")} className="cursor-pointer hover:text-blue-400">
-            Users
-          </li>
-          <li onClick={() => navigate("/admin/garages")} className="cursor-pointer hover:text-blue-400">
-            Garages
-          </li>
-          <li onClick={() => navigate("/admin/bookings")} className="cursor-pointer hover:text-blue-400">
-            Bookings
-          </li>
-          <li onClick={() => navigate("/admin/services")} className="cursor-pointer hover:text-blue-400">
-            Services
-          </li>
-        </ul>
+        <div className="flex-1 p-4 space-y-2">
+          {menu.map((item) => (
+            <button
+              key={item.name}
+              onClick={() => navigate(item.path)}
+              className={`w-full text-left px-4 py-2 rounded-md text-sm transition ${
+                location.pathname === item.path
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-gray-800"
+              }`}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
 
-        <button
-          onClick={() => {
-            localStorage.clear();
-            navigate("/login");
-          }}
-          className="mt-10 bg-red-500 px-4 py-2 rounded"
-        >
-          Logout
-        </button>
+        <div className="p-4 border-t border-gray-800">
+          <button
+            onClick={() => {
+              localStorage.clear();
+              navigate("/login");
+            }}
+            className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md text-sm"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6 bg-gray-100 overflow-auto">
+      <div className="flex-1 p-6 overflow-auto">
         <Outlet />
       </div>
     </div>

@@ -319,6 +319,7 @@
 
 
 // components/owner/GarageOwnerDashboard.jsx
+// components/owner/GarageOwnerDashboard.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -327,8 +328,10 @@ const GarageOwnerDashboard = () => {
   const [garages, setGarages] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState("garages");
+
   const [newGarageName, setNewGarageName] = useState("");
   const [newCity, setNewCity] = useState("");
+  const [file, setFile] = useState(null); // 🔥 NEW
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -336,7 +339,7 @@ const GarageOwnerDashboard = () => {
   // ================= LOGOUT =================
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login"); // 🔥 redirect to login page
+    navigate("/login");
   };
 
   // ================= FETCH =================
@@ -367,22 +370,38 @@ const GarageOwnerDashboard = () => {
     fetchBookings();
   }, []);
 
-  // ================= GARAGE =================
+  // ================= ADD GARAGE (UPDATED 🔥) =================
   const handleAddGarage = async () => {
     try {
+      const formData = new FormData();
+
+      formData.append("garageName", newGarageName);
+      formData.append("city", newCity);
+      formData.append("image", file); // 🔥 IMPORTANT
+
       const res = await axios.post(
-        "http://localhost:3000/garageowner/garages",
-        { garageName: newGarageName, city: newCity },
-        { headers: { Authorization: `Bearer ${token}` } }
+        "http://localhost:3000/garage/add",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       setGarages([...garages, res.data]);
+
       setNewGarageName("");
       setNewCity("");
+      setFile(null);
+
     } catch (err) {
       console.error(err);
     }
   };
 
+  // ================= EDIT =================
   const handleEdit = async (garage) => {
     const newName = prompt("Enter new name", garage.garageName);
     if (!newName) return;
@@ -396,6 +415,7 @@ const GarageOwnerDashboard = () => {
     fetchGarages();
   };
 
+  // ================= DELETE =================
   const handleDelete = async (id) => {
     if (!window.confirm("Delete?")) return;
 
@@ -407,6 +427,7 @@ const GarageOwnerDashboard = () => {
     fetchGarages();
   };
 
+  // ================= ADD SERVICE =================
   const handleAddService = async (garageId) => {
     const name = prompt("Service Name");
     const price = prompt("Price");
@@ -443,7 +464,7 @@ const GarageOwnerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
 
-      {/* 🔥 SIDEBAR */}
+      {/* SIDEBAR */}
       <div className="w-64 bg-gray-900 text-white p-5 flex flex-col justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-6">Owner Panel</h2>
@@ -467,7 +488,6 @@ const GarageOwnerDashboard = () => {
           </button>
         </div>
 
-        {/* 🔥 LOGOUT BUTTON */}
         <button
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded mt-6"
@@ -476,25 +496,28 @@ const GarageOwnerDashboard = () => {
         </button>
       </div>
 
-      {/* 🔥 MAIN CONTENT */}
+      {/* MAIN */}
       <div className="flex-1 p-4 md:p-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-6">
           Garage Owner Dashboard
         </h1>
 
-        {/* ================= GARAGES ================= */}
+        {/* GARAGES */}
         {activeTab === "garages" && (
           <div>
+
+            {/* ADD GARAGE */}
             <div className="bg-white p-5 rounded-xl shadow mb-6">
               <h2 className="font-semibold mb-3">Add Garage</h2>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
+
                 <input
                   type="text"
                   placeholder="Garage Name"
                   value={newGarageName}
                   onChange={(e) => setNewGarageName(e.target.value)}
-                  className="flex-1 px-4 py-2 border rounded-lg"
+                  className="px-4 py-2 border rounded-lg"
                 />
 
                 <input
@@ -502,8 +525,24 @@ const GarageOwnerDashboard = () => {
                   placeholder="City"
                   value={newCity}
                   onChange={(e) => setNewCity(e.target.value)}
-                  className="flex-1 px-4 py-2 border rounded-lg"
+                  className="px-4 py-2 border rounded-lg"
                 />
+
+                {/* 🔥 FILE INPUT */}
+                <input
+                  type="file"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  className="px-2 py-2 border rounded-lg"
+                />
+
+                {/* 🔥 IMAGE PREVIEW */}
+                {file && (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="preview"
+                    className="h-16 rounded"
+                  />
+                )}
 
                 <button
                   onClick={handleAddGarage}
@@ -514,11 +553,13 @@ const GarageOwnerDashboard = () => {
               </div>
             </div>
 
+            {/* GARAGE LIST */}
             <div className="bg-white rounded-xl shadow overflow-hidden">
               <table className="w-full">
                 <thead className="bg-gray-200">
                   <tr>
                     <th className="p-3">#</th>
+                    <th className="p-3">Image</th> {/* 🔥 NEW */}
                     <th className="p-3">Garage</th>
                     <th className="p-3">City</th>
                     <th className="p-3">Actions</th>
@@ -529,6 +570,20 @@ const GarageOwnerDashboard = () => {
                   {garages.map((g, i) => (
                     <tr key={g._id} className="border-b">
                       <td className="p-3">{i + 1}</td>
+
+                      {/* 🔥 SHOW IMAGE */}
+                      <td className="p-3">
+                        <img
+                          src={
+                            g.image
+                              ? `http://localhost:3000/${g.image}`
+                              : "https://via.placeholder.com/80"
+                          }
+                          alt="garage"
+                          className="h-12 w-16 object-cover rounded"
+                        />
+                      </td>
+
                       <td className="p-3">{g.garageName}</td>
                       <td className="p-3">{g.city}</td>
 
@@ -550,10 +605,11 @@ const GarageOwnerDashboard = () => {
                 </tbody>
               </table>
             </div>
+
           </div>
         )}
 
-        {/* ================= BOOKINGS ================= */}
+        {/* BOOKINGS */}
         {activeTab === "bookings" && (
           <div className="bg-white rounded-xl shadow overflow-hidden">
             <table className="w-full">

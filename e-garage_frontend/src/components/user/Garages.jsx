@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const Garages = () => {
   const [garages, setGarages] = useState([]);
@@ -13,7 +14,6 @@ const Garages = () => {
   const fetchGarages = async () => {
     try {
       const res = await axios.get("http://localhost:3000/garage/all");
-      console.log("DATA 👉", res.data); // 🔥 DEBUG
       setGarages(res.data || []);
     } catch (err) {
       console.log("ERROR 👉", err);
@@ -21,33 +21,82 @@ const Garages = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">All Garages</h2>
+    <div className="bg-gray-100 min-h-screen px-6 md:px-10 py-10">
 
+      {/* 🔥 HEADER */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+          🚗 Explore Garages
+        </h2>
+
+        <p className="text-gray-500 hidden md:block">
+          Find trusted garages near you
+        </p>
+      </div>
+
+      {/* ❌ EMPTY STATE */}
       {garages.length === 0 ? (
-        <p>No Garages Found ❌</p>
+        <div className="text-center mt-20">
+          <h3 className="text-xl text-gray-500">No Garages Found 😢</h3>
+        </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {garages.map((garage) => (
-            <div key={garage._id} className="border p-4 rounded shadow">
-              <img
-                src={garage.image || "https://via.placeholder.com/300"}
-                alt=""
-                className="h-40 w-full object-cover rounded"
-              />
-              <h3 className="text-lg font-semibold mt-2">
-                {garage.garageName}
-              </h3>
-              <p>{garage.city}</p>
 
-              <button
-                onClick={() => navigate(`/garage/${garage._id}`)}
-                className="mt-2 bg-orange-500 text-white px-3 py-1 rounded"
-              >
-                View Details
-              </button>
+        /* 🔥 GRID */
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          {garages.map((garage) => (
+            <div
+              key={garage._id}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group"
+            >
+
+              {/* 🔥 IMAGE */}
+              <div className="relative">
+                <img
+                  src={
+                    garage.image
+                      ? `http://localhost:3000/${garage.image}`
+                      : "https://via.placeholder.com/400x250"
+                  }
+                  alt="garage"
+                  className="h-52 w-full object-cover group-hover:scale-105 transition duration-300"
+                />
+
+                {/* STATUS BADGE */}
+                <span className={`absolute top-3 right-3 px-3 py-1 text-xs rounded-full text-white ${
+                  garage.status === "approved"
+                    ? "bg-green-500"
+                    : garage.status === "rejected"
+                    ? "bg-red-500"
+                    : "bg-yellow-500"
+                }`}>
+                  {garage.status}
+                </span>
+              </div>
+
+              {/* 🔥 CONTENT */}
+              <div className="p-5">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {garage.garageName}
+                </h3>
+
+                <p className="text-gray-500 flex items-center gap-2 mb-4">
+                  <FaMapMarkerAlt className="text-orange-500" />
+                  {garage.city}
+                </p>
+
+                {/* BUTTON */}
+                <button
+                  onClick={() => navigate(`/garage/${garage._id}`)}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg transition duration-300"
+                >
+                  View Details
+                </button>
+              </div>
+
             </div>
           ))}
+
         </div>
       )}
     </div>

@@ -88,14 +88,15 @@ import Booking from "../components/user/Booking";
 import MyBookings from "../components/user/MyBookings";
 import BookingDetails from "../components/user/BookingDetails";
 import Services from "../components/user/Services";
+import Profile from "../components/user/Profile"; // ✅ NEW
 
 // ADMIN
 import AdminLayout from "../components/admin/AdminLayout"; // ✅ NEW
 import Dashboard from "../components/admin/Dashboard";
-import Users from "../components/admin/Users";
-import GaragesAdmin from "../components/admin/Garages";
-import BookingsAdmin from "../components/admin/Bookings"; // ✅ ADD THIS
-import ServicesAdmin from "../components/admin/Services"; // ✅ ADD THIS
+import UsersAdmin from "../components/admin/UsersAdmin";
+import GaragesAdmin from "../components/admin/GaragesAdmin";
+import BookingsAdmin from "../components/admin/BookingsAdmin"; // ✅ NEW
+import ServicesAdmin from "../components/admin/ServicesAdmin"; // ✅ NEW
 
 // OWNER
 import GarageOwnerDashboard from "../components/garageowner/GarageOwnerDashboard";
@@ -124,6 +125,7 @@ const router = createBrowserRouter([
       { path: "booking", element: <Booking /> },
       { path: "user/bookings", element: <MyBookings /> },
       { path: "booking/:id", element: <BookingDetails /> },
+      { path: "profile", element: <Profile /> }, 
     ],
   },
 
@@ -151,7 +153,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "dashboard", element: <Dashboard /> },
-      { path: "users", element: <Users /> },
+      { path: "users", element: <UsersAdmin /> },
       { path: "garages", element: <GaragesAdmin /> },
       { path: "bookings", element: <BookingsAdmin /> }, // ✅ NEW
       { path: "services", element: <ServicesAdmin /> }, // ✅ NEW

@@ -19,6 +19,18 @@ exports.getServiceByGarage = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// GET ALL SERVICES
+exports.getAllServices = async (req, res) => {
+  try {
+    const services = await Service.find().populate("garageId", "garageName");
+
+    res.status(200).json(services);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 //add service
 exports.addService = async (req, res) => {
