@@ -104,6 +104,11 @@ import GarageOwnerDashboard from "../components/garageowner/GarageOwnerDashboard
 // AUTH
 import { PrivateRoute } from "./PrivateRoute";
 
+
+import ForgotPassword from "../components/user/ForgotPassword"; // ✅ NEW
+import ResetPassword from "../pages/ResetPassword";
+
+
 const router = createBrowserRouter([
   // 🌐 PUBLIC
   { path: "/login", element: <Login /> },
@@ -159,6 +164,9 @@ const router = createBrowserRouter([
       { path: "services", element: <ServicesAdmin /> }, // ✅ NEW
     ],
   },
+  { path: "/forgotpassword", element: <ForgotPassword /> },
+  { path: "/resetpassword/:token", element: <ResetPassword /> }
+
 ]);
 
 const AppRouter = () => <RouterProvider router={router} />;

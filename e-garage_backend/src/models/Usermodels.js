@@ -59,7 +59,10 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   role: { type: String, default: "user", enum: ["user", "admin","owner"] },
   profilePic: { type: String, default: "" },
-  status: { type: String, default: "active", enum: ["active", "inactive", "deleted", "blocked"] }
+  status: { type: String, default: "active", enum: ["active", "inactive", "deleted", "blocked"] },
+  // 🔥 ADD THESE (MAIN FIX)
+  resetPasswordToken: String,
+  resetPasswordExpire: Date
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

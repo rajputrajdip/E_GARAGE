@@ -1,7 +1,7 @@
 // routes/UserRoutes.js
 const express = require("express");
 const router = express.Router();
-const { registerUser, loginUser, getAllUsers ,getMyProfile ,updateProfile} = require("../controllers/UserController");
+const { registerUser, loginUser, getAllUsers ,getMyProfile ,updateProfile, forgotpassword,resetpassword} = require("../controllers/UserController");
 const auth = require("../Middleware/AuthMiddleware");
 const upload = require("../Middleware/upload");
 
@@ -19,6 +19,10 @@ router.get("/all", getAllUsers);
 router.get("/profile",auth, getMyProfile);
 
 router.put("/profile", auth, updateProfile);
+
+router.post("/forgotpassword", forgotpassword);
+
+router.put("/resetpassword/:token", resetpassword);
 
 upload.single("image")
 
