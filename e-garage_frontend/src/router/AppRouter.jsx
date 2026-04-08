@@ -89,6 +89,7 @@ import MyBookings from "../components/user/MyBookings";
 import BookingDetails from "../components/user/BookingDetails";
 import Services from "../components/user/Services";
 import Profile from "../components/user/Profile"; // ✅ NEW
+import VehicleSelection from "../components/user/VehicleSelection"; // ✅ NEW
 
 // ADMIN
 import AdminLayout from "../components/admin/AdminLayout"; // ✅ NEW
@@ -131,6 +132,7 @@ const router = createBrowserRouter([
       { path: "user/bookings", element: <MyBookings /> },
       { path: "booking/:id", element: <BookingDetails /> },
       { path: "profile", element: <Profile /> }, 
+      { path: "vehicle-selection", element: <VehicleSelection /> }
     ],
   },
 

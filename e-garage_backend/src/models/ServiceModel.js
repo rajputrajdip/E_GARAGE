@@ -11,10 +11,25 @@ const serviceSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+
+
+   // ✅ ADD THIS
+  priceTwoWheeler: {
+    type: Number,
+    required: true,
+  },
+  priceFourWheeler: {
+    type: Number,
+    required: true,
+  },
+
+  
   garageId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "garage",
-  }
+  },
+
+
 }, { timestamps: true });
 
 // module.exports = mongoose.model("service", serviceSchema);

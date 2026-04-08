@@ -3,6 +3,8 @@ const GarageOwner = require("../models/GarageOwnerModel");
 const Booking = require("../models/BookingModel");
 const Service = require("../models/ServiceModel");
 const mongoose = require("mongoose");
+const razorpay = require("../utils/razorpay");
+const crypto = require("crypto");
 
 // Create booking
 exports.createBooking = async (req, res) => {
@@ -18,7 +20,9 @@ exports.createBooking = async (req, res) => {
       garageId,      // ✅ no ObjectId()
       serviceName,
       price,
-      bookingDate
+      bookingDate,
+      status: "Pending",
+  serviceStatus: "Pending",
     });
 
     res.status(201).json(booking);
@@ -42,6 +46,7 @@ exports.getUserBookings = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // Get all bookings
 exports.getAllBookings = async (req, res) => {
@@ -85,6 +90,55 @@ exports.updateBookingStatus = async (req, res) => {
     );
 
     res.status(200).json(booking);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.createOrder = async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const options = {
+      amount: amount * 100, // paise
+      currency: "INR",
+      receipt: "receipt_" + Date.now(),
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.verifyPayment = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      userId,
+      garageId,
+      serviceId,
+      serviceName,
+      price,
+      bookingDate,
+    } = req.body;
+
+    const booking = await Booking.create({
+      userId,
+      garageId,
+      serviceId,
+      serviceName,
+      price,
+      bookingDate,
+
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      paymentStatus: "Paid",
+      status: "Confirmed",
+    });
+
+    res.json({ success: true, booking });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

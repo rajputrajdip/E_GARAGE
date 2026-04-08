@@ -16,5 +16,7 @@ router.get("/all", bookingController.getAllBookings);
 router.get("/:id", bookingController.getBookingById);
 
 router.put("/status/:id", bookingController.updateBookingStatus);
+router.post("/create-order", bookingController.createOrder);
+router.post("/verify-payment", bookingController.verifyPayment);
 
 module.exports = router;

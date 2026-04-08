@@ -7,8 +7,34 @@ const BookingSchema = new mongoose.Schema(
     serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service", required: true },
     serviceName: { type: String, required: true },
     price: { type: Number, required: true },
-    status: { type: String, enum: ["Pending", "Completed", "Cancelled"], default: "Pending" },
-    bookingDate: { type: Date, default: Date.now },
+
+    // ✅ NEW PAYMENT FIELDS
+    paymentId: String,
+    orderId: String,
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+
+    // Booking Status
+    status: {
+      type: String,
+      enum: ["Pending", "Confirmed", "Completed", "Cancelled"],
+      default: "Pending",
+    },
+
+    serviceStatus: {
+      type: String,
+      enum: ["Pending", "Completed"],
+      default: "Pending",
+    },
+
+    bookingDate: { type: Date, required: true },
+    vehicleType: {
+  type: String,
+  enum: ["two", "four"],
+}
   },
   { timestamps: true }
 );
