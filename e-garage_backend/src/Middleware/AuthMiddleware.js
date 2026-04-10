@@ -50,7 +50,7 @@
 
 const jwt = require("jsonwebtoken");
 
-const secret = process.env.JWT_SECRET || "secret123";
+const secret = process.env.JWT_SECRET   //|| "secret";
 
 const validateToken = (req, res, next) => {
   try {

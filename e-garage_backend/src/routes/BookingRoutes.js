@@ -18,5 +18,8 @@ router.get("/:id", bookingController.getBookingById);
 router.put("/status/:id", bookingController.updateBookingStatus);
 router.post("/create-order", bookingController.createOrder);
 router.post("/verify-payment", bookingController.verifyPayment);
+// router.put("/service-status/:id", bookingController.updateServiceStatus);
+// router.put("/owner-update/:id", bookingController.updateBookingByOwner);
+
 
 module.exports = router;

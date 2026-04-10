@@ -15,7 +15,7 @@ exports.getMyGarages = async (req, res) => {
 exports.getGaragesWithOwnerName = async (req, res) => {
   try {
     const garages = await Garage.find();
-
+    
     // 🔥 manually attach owner name
     const result = await Promise.all(
       garages.map(async (g) => {

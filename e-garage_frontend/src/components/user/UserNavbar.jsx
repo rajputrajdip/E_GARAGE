@@ -77,9 +77,10 @@ export const UserNavbar = () => {
   return (
     <div>
       {/* 🔥 NAVBAR */}
-      <nav className="bg-slate-900 text-white px-6 md:px-10 py-4 flex justify-between items-center shadow-lg relative">
-
+       {/* <nav className="bg-slate-900 text-white px-6 md:px-10 py-4 flex justify-between items-center shadow-lg relative ">  */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900 text-white px-6 md:px-10 py-4 flex justify-between items-center shadow-lg">
         {/* Logo */}
+        
         <h1
           onClick={() => navigate("/")}
           className="text-xl md:text-2xl font-bold text-orange-400 cursor-pointer"
@@ -189,7 +190,7 @@ export const UserNavbar = () => {
       </nav>
 
       {/* Page Content */}
-      <div className="p-4 md:p-6">
+      <div className="pt-15 ">
         <Outlet />
       </div>
     </div>

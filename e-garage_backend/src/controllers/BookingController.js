@@ -11,23 +11,18 @@ exports.createBooking = async (req, res) => {
   try {
     const { userId, serviceId, serviceName, price, bookingDate, garageId } = req.body;
 
-    const service = await Service.findById(serviceId);
-    if (!service) return res.status(404).json({ message: "Service not found" });
-
     const booking = await Booking.create({
-      userId,        // ✅ no ObjectId()
-      serviceId,     // ✅ no ObjectId()
-      garageId,      // ✅ no ObjectId()
+      userId,
+      serviceId,
+      garageId,
       serviceName,
       price,
       bookingDate,
-      status: "Pending",
-  serviceStatus: "Pending",
+      status: "pending", // ✅ FIX
     });
 
     res.status(201).json(booking);
   } catch (error) {
-    console.error("🔥 Booking creation error:", error); // 👈 check this log
     res.status(500).json({ message: error.message });
   }
 };
@@ -35,7 +30,7 @@ exports.createBooking = async (req, res) => {
 // Get bookings by user
 exports.getUserBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({  userId: new mongoose.Types.ObjectId(req.params.userId) })
+    const bookings = await Booking.find({ userId: req.params.userId })
       .populate("userId", "firstName lastName email role")
       .populate("garageId", "garageName city")
       .populate("serviceId", "serviceName price");
@@ -81,8 +76,19 @@ exports.getBookingById = async (req, res) => {
 
 exports.updateBookingStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    let { status } = req.body;
 
+    // ✅ STEP 1: normalize (small letters)
+    status = status.toLowerCase();
+
+    // ✅ STEP 2: validation
+    const allowedStatus = ["pending", "completed"];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    // ✅ STEP 3: update
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { status },
@@ -94,6 +100,7 @@ exports.updateBookingStatus = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 exports.createOrder = async (req, res) => {
   try {
     const { amount } = req.body;
@@ -111,6 +118,8 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
 exports.verifyPayment = async (req, res) => {
   try {
     const {
@@ -134,8 +143,9 @@ exports.verifyPayment = async (req, res) => {
 
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
-      paymentStatus: "Paid",
-      status: "Confirmed",
+      paymentStatus: "paid",
+
+      status: "pending", // ✅ ONLY THIS
     });
 
     res.json({ success: true, booking });
@@ -143,3 +153,53 @@ exports.verifyPayment = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// UPDATE SERVICE STATUS (Owner Complete karega)
+// UPDATE SERVICE STATUS (Owner Complete karega)
+// exports.updateServiceStatus = async (req, res) => {
+//   try {
+//     const { serviceStatus } = req.body;
+    
+//     // Agar serviceStatus "Completed" hai to status bhi "Completed" karo
+//     let updateData = { serviceStatus };
+//     if (serviceStatus === "Completed") {
+//       updateData.status = "Completed";
+//     }
+    
+//     const booking = await Booking.findByIdAndUpdate(
+//       req.params.id,
+//       updateData,
+//       { new: true }
+//     );
+
+//     res.status(200).json({ success: true, booking });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+// UPDATE BOTH STATUSES (Owner Complete karega)
+// exports.updateBookingByOwner = async (req, res) => {
+//   try {
+//     const { status, serviceStatus } = req.body;
+//     const bookingId = req.params.id;
+    
+//     let updateData = {};
+//     if (status !== undefined) updateData.status = status;
+//     if (serviceStatus !== undefined) updateData.serviceStatus = serviceStatus;
+    
+//     const booking = await Booking.findByIdAndUpdate(
+//       bookingId,
+//       updateData,
+//       { new: true }
+//     );
+    
+//     if (!booking) {
+//       return res.status(404).json({ message: "Booking not found" });
+//     }
+    
+//     res.status(200).json({ success: true, booking });
+//   } catch (err) {
+//     console.error("Update error:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// };

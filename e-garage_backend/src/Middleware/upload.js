@@ -1,7 +1,7 @@
 const multer = require("multer");
 const fs = require("fs");
 
-// ✅ create folder if not exists
+//  create folder if not exists
 const uploadDir = "uploads";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);

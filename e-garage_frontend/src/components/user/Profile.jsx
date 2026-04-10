@@ -1,5 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { FaUserEdit, FaSave, FaTimes } from "react-icons/fa";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -52,43 +55,60 @@ const Profile = () => {
     }
   };
 
-  if (!user) return <p className="text-center mt-10">Loading...</p>;
+  if (!user)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-10 w-10 border-4 border-orange-500 border-t-transparent rounded-full"></div>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8"
+      >
         {/* Avatar */}
-        <div className="flex justify-center mb-4">
-          <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl">
-            {user.firstName[0]}
+        <div className="flex justify-center mb-5">
+          <div className="w-24 h-24 bg-gradient-to-r from-orange-500 to-orange-600 text-white flex items-center justify-center rounded-full text-3xl font-bold shadow-lg">
+            {user.firstName?.[0]}
           </div>
         </div>
 
-        <h2 className="text-center text-xl font-bold mb-4">
+        <h2 className="text-center text-2xl font-bold text-gray-800 mb-6">
           My Profile
         </h2>
 
         {!editMode ? (
-          <>
-            <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
-            <p><strong>Email:</strong> {user.email}</p>
+          <div className="space-y-3">
+            <div className="bg-gray-50 p-3 rounded-xl">
+              <p className="text-sm text-gray-500">Full Name</p>
+              <p className="font-semibold text-gray-800">
+                {user.firstName} {user.lastName}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-3 rounded-xl">
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-semibold text-gray-800">{user.email}</p>
+            </div>
 
             <button
               onClick={() => setEditMode(true)}
-              className="mt-4 w-full bg-orange-500 text-white py-2 rounded"
+              className="mt-4 w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl transition"
             >
-              Edit Profile
+              <FaUserEdit /> Edit Profile
             </button>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="space-y-3">
             <input
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full border p-2 mb-2 rounded"
+              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none"
               placeholder="First Name"
             />
 
@@ -97,7 +117,7 @@ const Profile = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full border p-2 mb-2 rounded"
+              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none"
               placeholder="Last Name"
             />
 
@@ -106,30 +126,33 @@ const Profile = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border p-2 mb-2 rounded"
+              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none"
               placeholder="Email"
             />
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={handleUpdate}
-                className="flex-1 bg-green-500 text-white py-2 rounded"
+                className="flex-1 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl transition"
               >
-                Save
+                <FaSave /> Save
               </button>
 
               <button
                 onClick={() => setEditMode(false)}
-                className="flex-1 bg-gray-300 py-2 rounded"
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-300 hover:bg-gray-400 py-2.5 rounded-xl transition"
               >
-                Cancel
+                <FaTimes /> Cancel
               </button>
             </div>
-          </>
+          </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
 
 export default Profile;
+
+
+
